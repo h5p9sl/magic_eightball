@@ -3,7 +3,7 @@
 
 struct StringArray {
     size_t count;
-    char* strings[];
+    char** strings;
 };
 
 struct StringArray* load_responses(const char* file_name) {
@@ -22,6 +22,31 @@ struct StringArray* load_responses(const char* file_name) {
         // Read all the file data into a buffer
         buf = (char*)malloc(file_len);
         fread(buf, 1, file_len, file);
+    } else {
+        fprintf(stderr, "Unable to find file: %s", file_name);
+        exit(1);
+    }
+
+    if (buf) {
+        strs->count = 0;
+        // Iterate through file
+        for (int i = 0; i < file_len; i++) {
+            // Count number of newlines
+            if (buf[i] == '\n') {
+                buf[i] = '\0';
+                strs->count++;
+            }
+        }
+        // Allocate buffer of string-pointers
+        strs->strings = (char**)malloc(sizeof(char*) * strs->count);
+        // Assign pointers
+        int j = 0;
+        strs->strings[j++] = &buf[0];
+        for (int i = 1; i < file_len; i++) {
+            if (buf[i - 1] == '\0') {
+                strs->strings[j++] = &buf[i];
+            }
+        }
     }
 
     fclose(file);
@@ -29,11 +54,17 @@ struct StringArray* load_responses(const char* file_name) {
 }
 
 void free_responses(struct StringArray* strs) {
+    free(strs->strings);
     free(strs);
 }
 
 int main() {
     struct StringArray* responses = load_responses("data.txt");
+
+    for (int i = 0; i < responses->count; i++) {
+        printf("%s\n", responses->strings[i]);
+    }
+
     free_responses(responses);
     return 0;
 }
