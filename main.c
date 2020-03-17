@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct StringArray {
     size_t count;
@@ -60,9 +61,17 @@ void free_responses(struct StringArray* strs) {
 
 int main() {
     struct StringArray* responses = load_responses("data.txt");
+    char* buf = (char*)alloca(64 * sizeof(char));
 
-    for (int i = 0; i < responses->count; i++) {
-        printf("%s\n", responses->strings[i]);
+    srand(time(NULL));
+
+    while (1) {
+        // Get input from the user
+        printf("Please ask a question\n> ");
+        fgets(buf, 64, stdin);
+
+        // Print out a random response
+        puts(responses->strings[rand() % responses->count - 1]);
     }
 
     free_responses(responses);
