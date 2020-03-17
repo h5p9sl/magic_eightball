@@ -48,6 +48,7 @@ struct StringArray* load_responses(const char* file_name) {
                 strs->strings[j++] = &buf[i];
             }
         }
+        free(buf);
     }
 
     fclose(file);
