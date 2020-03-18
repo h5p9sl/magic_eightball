@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <time.h>
 
-struct StringArray {
+typedef struct StringArray {
     size_t count;
     char** strings;
-};
+} StringArray;
 
-struct StringArray* load_responses(const char* file_name) {
-    struct StringArray* strs = (struct StringArray*)
-            malloc(sizeof(struct StringArray));
+StringArray* load_responses(const char* file_name) {
+    StringArray* strs = (StringArray*)
+            malloc(sizeof(StringArray));
     FILE* file = fopen(file_name, "r");
 
     size_t file_len = 0l;
@@ -55,13 +55,13 @@ struct StringArray* load_responses(const char* file_name) {
     return strs; 
 }
 
-void free_responses(struct StringArray* strs) {
+void free_responses(StringArray* strs) {
     free(strs->strings);
     free(strs);
 }
 
 int main() {
-    struct StringArray* responses = load_responses("data.txt");
+    StringArray* responses = load_responses("data.txt");
     char* buf = (char*)alloca(64 * sizeof(char));
 
     srand(time(NULL));
